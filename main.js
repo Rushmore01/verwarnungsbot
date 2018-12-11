@@ -1,7 +1,8 @@
 const Discord    = require("discord.js")
-const config     = require("./config.json")
 const verwarnungen = require("./verwarnungen.json")
 const fs         = require("fs")
+const express = require('express');
+const app = express();
 
 var client = new Discord.Client()
 
@@ -19,10 +20,10 @@ client.on("message", (msg) => {
         guild  = msg.guild
     
 
-        if (author.id != client.user.id && cont.startsWith(config.prefix)) {
+        if (author.id != client.user.id && cont.startsWith(process.env.PREFIX)) {
 
         // ::say hello world!
-    var invoke = cont.split(" ")[0].substr(config.prefix.length),
+    var invoke = cont.split(" ")[0].substr(process.env.PREFIX.length),
             args   = cont.split(" ").slice(1)
         // Ping Befehl
         if (invoke === "ping") {
@@ -93,4 +94,11 @@ client.on("message", (msg) => {
 })
 
 
-client.login(config.token)
+client.login(process.env.TOKEN)
+
+//Ping yourself every 5 minutes, just in case
+app.get("/", (request, response) => {
+  console.log("Ping Received");
+  response.sendStatus(200);
+});
+app.listen(process.env.PORT);
